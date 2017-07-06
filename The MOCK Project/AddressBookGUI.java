@@ -11,8 +11,14 @@ import javafx.stage.WindowEvent;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.BufferedWriter;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.collections.ObservableList;
 
 public class AddressBookGUI {
     private static TextField txtFieldAddress;
@@ -24,9 +30,63 @@ public class AddressBookGUI {
     private static AddressBook currentlySelectedAddress = null;
     private static List<AddressBook> list = new ArrayList<AddressBook>();
    
-    public static void main(String args[]) {
+    public static void main(String args[])  {
         launchFX();
-       
+    }
+    
+    public static void readTextFile() {
+        try {
+            FileReader fr = new FileReader("U:\\Computer Science\\Projects\\The MOCK Project\\dataList.txt");
+            BufferedReader br = new BufferedReader(fr);
+            
+            String line;
+            while((line = br.readLine()) != null) {
+                String[] data = line.split(", ");
+                
+                if (data.length != 3) continue;
+                
+                String address = data[0];
+                String name = data[1];
+                String surname = data[2];
+                
+                System.out.println(address + ", " + name + ", " + surname);
+                
+                AddressBook addressBook = new AddressBook(address, name, surname);
+                addressArrList.add(addressBook);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    private static void saveTextFile() {
+         try {
+             FileWriter fw = new FileWriter("U:\\Computer Science\\Projects\\The MOCK Project\\dataList.txt", false);
+             BufferedWriter bw = new BufferedWriter (fw);
+            
+             ObservableList<AddressBook> addresses = addressListView.getItems();
+             for (AddressBook address : addresses) {
+                 System.out.println("Saving address: " + address.toString());
+                 bw.write(address.toString());
+                 bw.newLine();
+             }
+             
+             bw.close();
+             
+             //String content = txtFieldAddress.getText() + "," + txtFieldName.getText() + "," + txtFieldSurname.getText();
+             //bw.newLine();
+             //bw.write(content);
+             //bw.close();
+             
+             //PrintWriter pw = new PrintWriter("U:\\Computer Science\\Projects\\The MOCK Project\\dataList.txt", "UTF-8");
+              //ArrayList<AddressBook> addresses = addressListView.getItems();
+         
+              //for (AddressBook address : addresses) {
+              //  pw.println(address.toString());
+              //}
+         } catch(IOException e) {
+             e.printStackTrace();
+         }
     }
 
     private static void launchFX() {
@@ -50,11 +110,18 @@ public class AddressBookGUI {
         addressListView =  new ListView<AddressBook>();
         addressListView.setLayoutX(700);
         addressListView.setLayoutY(50);
-        rootPane.getChildren().add(addressListView);
         
-        addressListView.setOnMouseClicked((MouseEvent me) -> {
-            currentlySelectedAddress = addressListView.getSelectionModel().getSelectedItem();
-        });
+        readTextFile();
+        
+        for (AddressBook address : addressArrList) {
+            addressListView.getItems().add(address);
+        }
+         
+         addressListView.setOnMouseClicked((MouseEvent me) -> {
+             currentlySelectedAddress = addressListView.getSelectionModel().getSelectedItem();
+         });
+         
+         rootPane.getChildren().add(addressListView);
         
         Label label = new Label("Top Data Address Book");
         label.setLayoutX(50);
@@ -117,6 +184,7 @@ public class AddressBookGUI {
         btnRemove.setLayoutX(100);
         btnRemove.setLayoutY(300);
         btnRemove.setOnAction((ActionEvent ae) ->removeItem());
+
         rootPane.getChildren().add(btnRemove);
         
         Button btnClear = new Button();
@@ -131,8 +199,9 @@ public class AddressBookGUI {
         String add = txtFieldAddress.getText();
         String name = txtFieldName.getText();
         String surname = txtFieldSurname.getText();
+        
         addressArrList.add(new AddressBook(add, name, surname));
-
+        
         addressListView.getItems().clear();             //deletes everything in the ListView
 
         for(AddressBook address : addressArrList) {         //for every University object in uniArrayList
@@ -144,20 +213,20 @@ public class AddressBookGUI {
     {
         addressArrList.remove(currentlySelectedAddress);
         addressListView.getItems().remove(currentlySelectedAddress);
-   
     }
     
     private static void clearListView()
     {
         addressListView.getItems().clear();
         addressArrList.clear();
-        
-
     }
     
         private static void terminate()
     {
-        System.out.println("Later nerd!");
+        System.out.println("Program terminated...");
+        saveTextFile();
         System.exit(0);
     }
+    
 }
+
