@@ -1,0 +1,14 @@
+#BlueJ class context
+comment0.params=args
+comment0.target=void\ main(java.lang.String[])
+comment1.params=
+comment1.target=void\ launchFX()
+comment2.params=
+comment2.target=void\ initialiseGUI()
+comment3.params=we
+comment3.target=void\ displayCloseDialog(javafx.stage.WindowEvent)
+comment4.params=
+comment4.target=void\ printMessage()
+comment5.params=
+comment5.target=void\ terminate()
+numComments=6
